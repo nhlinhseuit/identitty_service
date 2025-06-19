@@ -2,8 +2,11 @@ package com.example.identityservice.controller;
 
 import com.example.identityservice.dto.request.ApiResponse;
 import com.example.identityservice.dto.request.AuthenticationRequest;
+import com.example.identityservice.dto.request.IntrospectRequest;
 import com.example.identityservice.dto.response.AuthenticationResponse;
+import com.example.identityservice.dto.response.IntrospectResponse;
 import com.example.identityservice.service.AuthenticationService;
+import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
 
+import java.text.ParseException;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -20,15 +25,22 @@ import org.springframework.web.client.RestClient;
 public class AuthenticationController {
     AuthenticationService  authenticationService;
 
-    @PostMapping("/log-in")
+    @PostMapping("/token")
     ApiResponse<AuthenticationResponse> logIn(@RequestBody AuthenticationRequest authenticationRequest){
-        boolean result = authenticationService.authenticate(authenticationRequest);
+        AuthenticationResponse result = authenticationService.authenticate(authenticationRequest);
 
         return ApiResponse.<AuthenticationResponse>builder().
-            result(AuthenticationResponse.builder()
-                    .isAuthenticated(result)
-                    .build())
+            result(result)
         .build();
+    }
+
+    @PostMapping("/introspect")
+    ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest introspectRequest) throws ParseException, JOSEException {
+        IntrospectResponse result = authenticationService.introspect(introspectRequest);
+
+        return ApiResponse.<IntrospectResponse>builder().
+                result(result)
+                .build();
     }
 
 }
