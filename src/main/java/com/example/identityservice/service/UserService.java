@@ -52,6 +52,7 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    // se nem loi access denied
     public List<UserResponse> getUsers() {
         log.info("Getting all users in method getUsers");
         List<User> users = userRepository.findAll();
@@ -59,6 +60,7 @@ public class UserService {
         return userMapper.toUserResponseList(users);
     }
 
+    // Khong bat duoc error access denied, ma phai catch trong Security config -> authenticationEntryPoint
     @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUser(String userId) {
         return userMapper.toUserResponse(userRepository.findById(userId).orElseThrow(
