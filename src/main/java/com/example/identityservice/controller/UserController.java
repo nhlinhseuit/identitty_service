@@ -33,22 +33,8 @@ public class UserController {
 
     @GetMapping
     ApiResponse<List<UserResponse>> getUsers() {
-
-        var authentication =  SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            log.warn("Authentication is NULL");
-        } else {
-            log.warn("Authentication: {}", authentication);
-            log.warn("Username: {}", authentication.getName());
-            authentication.getAuthorities().forEach(authority -> {
-                log.warn("Authority: {}", authority.getAuthority());
-            });
-        }
-
-
         ApiResponse<List<UserResponse>> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.getUsers());
-
 
         return apiResponse;
     }
@@ -57,6 +43,14 @@ public class UserController {
     ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
         ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.getUser(userId));
+
+        return apiResponse;
+    }
+
+    @GetMapping("/myInfo")
+    ApiResponse<UserResponse> getMyInfo() {
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.getMyInfo());
 
         return apiResponse;
     }
