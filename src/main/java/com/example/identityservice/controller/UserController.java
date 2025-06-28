@@ -4,17 +4,18 @@ import com.example.identityservice.dto.request.ApiResponse;
 import com.example.identityservice.dto.request.UserCreationRequest;
 import com.example.identityservice.dto.request.UserUpdateRequest;
 import com.example.identityservice.dto.response.UserResponse;
-import com.example.identityservice.entity.User;
 import com.example.identityservice.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -32,6 +33,18 @@ public class UserController {
 
     @GetMapping
     ApiResponse<List<UserResponse>> getUsers() {
+
+        var authentication =  SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            log.warn("Authentication is NULL");
+        } else {
+            log.warn("Authentication: {}", authentication);
+            log.warn("Username: {}", authentication.getName());
+            authentication.getAuthorities().forEach(authority -> {
+                log.warn("Authority: {}", authority.getAuthority());
+            });
+        }
+
 
         ApiResponse<List<UserResponse>> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.getUsers());

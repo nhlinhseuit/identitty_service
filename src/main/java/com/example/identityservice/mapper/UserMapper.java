@@ -23,5 +23,6 @@ public interface UserMapper {
     UserResponse toUserResponse(User user);
 
 //    Co user, nhan vao user de update lai
+    // Mappingtarget: thay vi tao 1 User moi, thi cap nhat truc tiep vao User
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
 }
