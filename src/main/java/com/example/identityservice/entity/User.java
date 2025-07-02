@@ -25,5 +25,7 @@ public class User {
      String firstName;
      LocalDate dob;
      String lastName;
-     Set<String> roles;
+
+     @ManyToMany // user co nhieu roles -> chi can khai bao ManyToMany o day va db se tu sinh bang, kh can khai bao trong role ve ManyToMany voi User nua
+     Set<Role> roles;
 }

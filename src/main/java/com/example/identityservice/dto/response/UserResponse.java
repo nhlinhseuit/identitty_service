@@ -1,4 +1,5 @@
 package com.example.identityservice.dto.response;
+import com.example.identityservice.entity.Role;
 import lombok.*;
 import java.time.LocalDate;
 import java.util.Set;
@@ -13,5 +14,5 @@ public class UserResponse {
     String firstName;
     LocalDate dob;
     String lastName;
-    Set<String> roles;
+    Set<Role> roles;
 }
