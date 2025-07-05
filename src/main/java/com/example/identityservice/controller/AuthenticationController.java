@@ -1,9 +1,6 @@
 package com.example.identityservice.controller;
 
-import com.example.identityservice.dto.request.ApiResponse;
-import com.example.identityservice.dto.request.AuthenticationRequest;
-import com.example.identityservice.dto.request.IntrospectRequest;
-import com.example.identityservice.dto.request.LogOutRequest;
+import com.example.identityservice.dto.request.*;
 import com.example.identityservice.dto.response.AuthenticationResponse;
 import com.example.identityservice.dto.response.IntrospectResponse;
 import com.example.identityservice.service.AuthenticationService;
@@ -49,6 +46,15 @@ public class AuthenticationController {
         authenticationService.logOut(logOutRequest);
 
         return ApiResponse.<Void>builder()
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
+        AuthenticationResponse result = authenticationService.refreshToken(request);
+
+        return ApiResponse.<AuthenticationResponse>builder().
+                result(result)
                 .build();
     }
 
