@@ -19,10 +19,11 @@ public interface UserMapper {
     User toUser(UserCreationRequest  request);
 
 //    @Mapping(source = "firstName", target = "lastName")
-    @Mapping(target = "lastName", ignore = true)
     UserResponse toUserResponse(User user);
 
-//    Co user, nhan vao user de update lai
+    //    Co user, nhan vao user de update lai
     // Mappingtarget: thay vi tao 1 User moi, thi cap nhat truc tiep vao User
+
+    @Mapping(target = "roles", ignore = true) // ignore vi request nhan ListString con tra ve ListRoles
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
 }
