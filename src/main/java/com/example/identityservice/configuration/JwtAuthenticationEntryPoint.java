@@ -13,7 +13,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import java.io.IOException;
 
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    // authentication khon thanh cong
+    // authentication khong thanh cong do loi JWT
+    // TH1: Bat loi PostAuthorize
+    // TH2: Trong customJwtDecoder nem JWTException
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         ErrorCode errorCode = ErrorCode.UNAUTHENTICATED;

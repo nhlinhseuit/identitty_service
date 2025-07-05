@@ -2,6 +2,7 @@ package com.example.identityservice.configuration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,10 +26,10 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Value("${jwt.signerKey}")
-    private String SIGNER_KEY;
+    private final String[] PUBLIC_ENDPOINTS = {"/users", "/auth/token", "/auth/introspect", "/auth/logout"};
 
-    private final String[] PUBLIC_ENDPOINTS = {"/users", "/auth/token", "/auth/introspect"};
+    @Autowired
+    private CustomJwtDecoder customJwtDecoder;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -38,7 +39,7 @@ public class SecurityConfig {
         httpSecurity.oauth2ResourceServer(
                 oauth2 -> oauth2.jwt(jwtConfigurer ->
                         jwtConfigurer
-                                .decoder(jwtDecoder())
+                                .decoder(customJwtDecoder)
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
         );
@@ -57,13 +58,6 @@ public class SecurityConfig {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
 
         return jwtAuthenticationConverter;
-    }
-
-
-    @Bean
-    JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNER_KEY.getBytes(), "HS256");
-        return NimbusJwtDecoder.withSecretKey(secretKeySpec).macAlgorithm(MacAlgorithm.HS256).build();
     }
 
     @Bean
