@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.when;
 @Slf4j
 @SpringBootTest
 @AutoConfigureMockMvc // tao mock request
+@TestPropertySource("/test.properties")
 public class UserControllerTest {
 
     @Autowired
@@ -78,7 +80,7 @@ public class UserControllerTest {
                     .content(content))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value(1000))
-                .andExpect(MockMvcResultMatchers.jsonPath("result.id").value("123123"))
+                .andExpect(MockMvcResultMatchers.jsonPath("result.id").value("c1qwesccaa"))
         ;
     }
 

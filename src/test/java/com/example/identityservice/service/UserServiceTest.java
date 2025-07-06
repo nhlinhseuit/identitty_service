@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@TestPropertySource("/test.properties")
 public class UserServiceTest {
 
     @Autowired
@@ -91,7 +93,7 @@ public class UserServiceTest {
             userService.createUser(userCreationRequest)
         );
 
-        assertThat(exeption.getErrorCode().getCode()).isEqualTo(1002f);
+        assertThat(exeption.getErrorCode().getCode()).isEqualTo(1002);
         assertThat(exeption.getErrorCode().getMessage()).isEqualTo("Username already exists");
 
     }
