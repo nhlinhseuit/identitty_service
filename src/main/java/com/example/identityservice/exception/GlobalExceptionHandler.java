@@ -54,12 +54,18 @@ public class GlobalExceptionHandler {
         System.out.println(text.length());
     }
 
+    public void causeNPE2() {
+        String text = null;
+        System.out.println(text.length());
+    }
+
     //    EXCEPTION bat loi Valid
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception) {
 
         //TEST SONAR
         causeNPE();
+        causeNPE2();
 
 
         String enumKey = exception.getFieldError().getDefaultMessage();
