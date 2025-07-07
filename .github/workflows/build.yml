@@ -37,9 +37,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 #        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=demo-project -Dsonar.projectName='demo-project' -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
-        run: mvn -B verify -DskipTests=true org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \ 
-          -Dsonar.projectKey=demo-project \
-          -Dsonar.projectName='demo-project' \
-#          http://192.168.70.123:9000
-          -Dsonar.host.url=$SONAR_HOST_URL \
+        run: mvn -B verify -DskipTests=true org.sonarsource.scanner.maven:sonar-maven-plugin:sonar 
+          -Dsonar.projectKey=demo-project 
+          -Dsonar.projectName='demo-project'
+          -Dsonar.host.url=http://192.168.70.123:9000
           -Dsonar.login=$SONAR_TOKEN
