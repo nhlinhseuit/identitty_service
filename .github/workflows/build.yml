@@ -40,5 +40,6 @@ jobs:
         run: mvn -B verify -DskipTests=true org.sonarsource.scanner.maven:sonar-maven-plugin:sonar 
           -Dsonar.projectKey=demo-project 
           -Dsonar.projectName='demo-project'
-          -Dsonar.host.url=http://192.168.70.123:9000
+#          http://192.168.70.123:9000
+          -Dsonar.host.url=$SONAR_HOST_URL
           -Dsonar.login=$SONAR_TOKEN
