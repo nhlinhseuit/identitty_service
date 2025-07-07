@@ -51,7 +51,12 @@ public class GlobalExceptionHandler {
 
     public void causeNPE() {
         String text = null;
-        System.out.println(text.length()); // <- Sonar sẽ báo Bug nếu class này được sử dụng thật trong flow
+        System.out.println(text.length());
+    }
+
+    public void causeNPE2() {
+        String text = null;
+        System.out.println(text.length());
     }
 
     //    EXCEPTION bat loi Valid
@@ -60,6 +65,7 @@ public class GlobalExceptionHandler {
 
         //TEST SONAR
         causeNPE();
+        causeNPE2();
 
 
         String enumKey = exception.getFieldError().getDefaultMessage();
