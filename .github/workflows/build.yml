@@ -41,4 +41,4 @@ jobs:
           -Dsonar.projectKey=demo-project 
           -Dsonar.projectName='demo-project'
           -Dsonar.host.url=http://192.168.70.123:9000
-          -Dsonar.login=$SONAR_TOKEN
+          -Dsonar.login=sqp_d90a2d41be6964e77317fc8abd9cef38060db56f
