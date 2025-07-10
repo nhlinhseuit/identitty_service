@@ -1,17 +1,19 @@
 package com.example.identityservice.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.example.identityservice.dto.request.PermissionRequest;
 import com.example.identityservice.dto.response.PermissionResponse;
 import com.example.identityservice.entity.Permission;
 import com.example.identityservice.mapper.PermissionMapper;
 import com.example.identityservice.repository.PermissionRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +24,9 @@ public class PermissionService {
     PermissionMapper permissionMapper;
 
     public PermissionResponse create(PermissionRequest object) {
-       Permission permission = permissionMapper.toPermission(object);
-       permission = permissionRepository.save(permission);
-       return  permissionMapper.toPermissionResponse(permission);
+        Permission permission = permissionMapper.toPermission(object);
+        permission = permissionRepository.save(permission);
+        return permissionMapper.toPermissionResponse(permission);
     }
 
     public List<PermissionResponse> getAll() {

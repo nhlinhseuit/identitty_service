@@ -1,10 +1,7 @@
 package com.example.identityservice.controller;
 
-import com.example.identityservice.dto.request.UserCreationRequest;
-import com.example.identityservice.dto.response.UserResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +13,16 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.time.LocalDate;
+import com.example.identityservice.dto.request.UserCreationRequest;
+import com.example.identityservice.dto.response.UserResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest
@@ -30,7 +31,6 @@ import java.time.LocalDate;
 public class UserControllerIntegrationTest {
     @Container
     static final PostgreSQLContainer<?> POSTGRES_CONTAINER = new PostgreSQLContainer<>("postgres:15");
-
 
     @DynamicPropertySource
     static void configureDataSource(DynamicPropertyRegistry registry) {
@@ -70,7 +70,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-        //
+    //
     void createUser_validRequest_success() throws Exception {
         // GIVEN
         ObjectMapper objectMapper = new ObjectMapper();
@@ -78,17 +78,14 @@ public class UserControllerIntegrationTest {
         String content = objectMapper.writeValueAsString(userCreationRequest);
 
         // WHEN & THEN
-        var response = mockMvc
-                .perform(MockMvcRequestBuilders
-                        .post("/users")
+        var response = mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value(1000))
                 .andExpect(MockMvcResultMatchers.jsonPath("result.username").value("john"))
                 .andExpect(MockMvcResultMatchers.jsonPath("result.firstName").value("John"))
-                .andExpect(MockMvcResultMatchers.jsonPath("result.lastName").value("Smith"))
-        ;
+                .andExpect(MockMvcResultMatchers.jsonPath("result.lastName").value("Smith"));
 
         log.info("Result: {}", response.andReturn().getResponse().getContentAsString());
     }

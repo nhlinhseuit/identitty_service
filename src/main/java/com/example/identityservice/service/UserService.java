@@ -1,5 +1,14 @@
 package com.example.identityservice.service;
 
+import java.util.HashSet;
+import java.util.List;
+
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.example.identityservice.dto.request.UserCreationRequest;
 import com.example.identityservice.dto.request.UserUpdateRequest;
 import com.example.identityservice.dto.response.UserResponse;
@@ -10,18 +19,11 @@ import com.example.identityservice.exception.ErrorCode;
 import com.example.identityservice.mapper.UserMapper;
 import com.example.identityservice.repository.RoleRepository;
 import com.example.identityservice.repository.UserRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -46,13 +48,13 @@ public class UserService {
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name());
 
-//        user.setRoles(roles);
+        //        user.setRoles(roles);
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
     // sd hasRole thi se tiem trong authority nao co prefix la ROLE_...
-//    @PreAuthorize("hasRole('ADMIN')")
+    //    @PreAuthorize("hasRole('ADMIN')")
     @PreAuthorize("hasAuthority('APPROVE_POST')")
     // se nem loi access denied
     public List<UserResponse> getUsers() {
@@ -69,9 +71,8 @@ public class UserService {
     // Khong bat duoc error access denied, ma phai catch trong Security config -> authenticationEntryPoint
     @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUser(String userId) {
-        return userMapper.toUserResponse(userRepository.findById(userId).orElseThrow(
-                () -> new AppException(ErrorCode.USER_NOT_EXISTED))
-        );
+        return userMapper.toUserResponse(
+                userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
     public UserResponse getMyInfo() {
@@ -83,8 +84,7 @@ public class UserService {
     }
 
     public UserResponse updateUser(String userId, UserUpdateRequest request) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         userMapper.updateUser(user, request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -94,7 +94,6 @@ public class UserService {
         user.setRoles(new HashSet<>(roles));
 
         return userMapper.toUserResponse(userRepository.save(user));
-
     }
 
     public void deleteUser(String userId) {

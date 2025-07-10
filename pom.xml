@@ -33,6 +33,9 @@
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+
+        <spotless.version>2.43.0</spotless.version>
+
         <!-- Thêm thuộc tính phiên bản cho MapStruct và Lombok -->
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <lombok.version>1.18.30</lombok.version> <!-- Đặt phiên bản Lombok vào đây cũng tốt hơn -->
@@ -203,6 +206,37 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <java>
+                        <removeUnusedImports />
+                        <toggleOffOn/>
+                        <trimTrailingWhitespace/>
+                        <endWithNewline/>
+                        <indent>
+                            <tabs>true</tabs>
+                            <spacesPerTab>4</spacesPerTab>
+                        </indent>
+                        <palantirJavaFormat/>
+                        <importOrder>
+                            <!-- Specify either order or file, but not both -->
+                            <order>java,jakarta,org,com,com.diffplug,</order>
+                        </importOrder>
+                    </java>
+                </configuration>
+                <!--				<executions>-->
+                <!--					<execution>-->
+                <!--						<phase>compile</phase>-->
+                <!--						<goals>-->
+                <!--							<goal>check</goal>-->
+                <!--						</goals>-->
+                <!--					</execution>-->
+                <!--				</executions>-->
             </plugin>
         </plugins>
     </build>

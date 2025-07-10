@@ -1,11 +1,12 @@
 package com.example.identityservice.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.util.Set;
+
+import jakarta.persistence.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Data
@@ -17,15 +18,16 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    String id;
 
-     String id;
-     String username;
+    String username;
 
-     String password;
-     String firstName;
-     LocalDate dob;
-     String lastName;
+    String password;
+    String firstName;
+    LocalDate dob;
+    String lastName;
 
-     @ManyToMany // user co nhieu roles -> chi can khai bao ManyToMany o day va db se tu sinh bang, kh can khai bao trong role ve ManyToMany voi User nua
-     Set<Role> roles;
+    @ManyToMany // user co nhieu roles -> chi can khai bao ManyToMany o day va db se tu sinh bang, kh can khai bao trong
+    // role ve ManyToMany voi User nua
+    Set<Role> roles;
 }

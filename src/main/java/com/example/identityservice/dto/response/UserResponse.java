@@ -1,8 +1,9 @@
 package com.example.identityservice.dto.response;
-import com.example.identityservice.entity.Role;
-import lombok.*;
+
 import java.time.LocalDate;
 import java.util.Set;
+
+import lombok.*;
 
 @Data
 @NoArgsConstructor
