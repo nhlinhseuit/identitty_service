@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
 
     public void causeNPE() {
         String text = null;
-//        System.out.println(text.length()); // <- Sonar sẽ báo Bug nếu class này được sử dụng thật trong flow
+        System.out.println(text.length()); // <- Sonar sẽ báo Bug nếu class này được sử dụng thật trong flow
     }
 
     //    EXCEPTION bat loi Valid
