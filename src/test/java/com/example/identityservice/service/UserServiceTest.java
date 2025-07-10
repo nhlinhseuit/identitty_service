@@ -6,10 +6,12 @@ import com.example.identityservice.entity.User;
 import com.example.identityservice.exception.AppException;
 import com.example.identityservice.exception.ErrorCode;
 import com.example.identityservice.repository.UserRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -95,6 +97,27 @@ public class UserServiceTest {
 
         assertThat(exeption.getErrorCode().getCode()).isEqualTo(1002);
         assertThat(exeption.getErrorCode().getMessage()).isEqualTo("Username already exists");
+    }
 
+    @Test
+    @WithMockUser(username = "john")
+    void getMyInfo_valid_success() {
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+
+        var reponse = userService.getMyInfo();
+
+        Assertions.assertThat(reponse.getUsername()).isEqualTo("john");
+        Assertions.assertThat(reponse.getId()).isEqualTo("c1qwesccaa");
+    }
+
+
+    @Test
+    @WithMockUser(username = "john")
+    void getMyInfo_userNotFound_error() {
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.ofNullable(null));
+
+        var exception = assertThrows(AppException.class, () ->userService.getMyInfo());
+
+        Assertions.assertThat(exception.getErrorCode().getCode()).isEqualTo(1005);
     }
 }
