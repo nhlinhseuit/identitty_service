@@ -19,8 +19,7 @@ spring:
 server:
   port: 8080
 
-
 jwt:
   signerKey: "feoqgwuvjddf1u2reureloqrq3h951gw"
-  valid-duration: 10 # in seconds
-  refreshable-duration: 15 # in seconds
+  valid-duration: 60 # in seconds
+  refreshable-duration: 300 # in seconds

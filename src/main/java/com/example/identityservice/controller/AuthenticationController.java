@@ -47,9 +47,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
+    // It will be called from client when the old token is expired
     ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshRequest request)
             throws ParseException, JOSEException {
-        AuthenticationResponse result = authenticationService.refreshToken(request);
+        AuthenticationResponse result = authenticationService.refreshTheOldToken(request);
 
         return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }

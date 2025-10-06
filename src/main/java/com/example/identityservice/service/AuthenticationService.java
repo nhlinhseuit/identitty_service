@@ -78,14 +78,14 @@ public class AuthenticationService {
 
     public void logOut(LogOutRequest request) throws ParseException, JOSEException {
         try {
-            // check theo thgan cua refresh token de kh bi nem loi, va save duoc invalidatedToken
+            // check theo thgan cua refresh token de kh bi nem loi, va save duoc
+            // invalidatedToken
             var signedToken = verifyToken(request.getToken(), true);
 
             String jit = signedToken.getJWTClaimsSet().getJWTID();
             Date expiryTime = signedToken.getJWTClaimsSet().getExpirationTime();
 
-            InvalidatedToken invalidatedToken =
-                    InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
+            InvalidatedToken invalidatedToken = InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
 
             invalidatedTokenRepository.save(invalidatedToken);
         } catch (Exception e) {
@@ -119,22 +119,22 @@ public class AuthenticationService {
         return signedJWT;
     }
 
-    public AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException {
+    public AuthenticationResponse refreshTheOldToken(RefreshRequest request) throws ParseException, JOSEException {
         var signedJWT = verifyToken(request.getToken(), true);
 
         var jit = signedJWT.getJWTClaimsSet().getJWTID();
         var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
-        InvalidatedToken invalidatedToken =
-                InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
 
         invalidatedTokenRepository.save(invalidatedToken);
 
         var username = signedJWT.getJWTClaimsSet().getSubject();
-        var user =
-                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        // nhan 1 token moi trong khoang thoi gian duoc refresh, chu khong phai nhan ve 1 token goi la refresh token
+        // nhan 1 token moi trong khoang thoi gian duoc refresh, chu khong phai nhan ve
+        // 1 token goi la refresh token
         var token = generateToken(user);
         return AuthenticationResponse.builder()
                 .token(token)
