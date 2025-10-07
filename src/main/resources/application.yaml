@@ -3,7 +3,7 @@ spring:
     name: identity-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/identity_service
+    url: ${DBMS_CONNECTION:jdbc:postgresql://postgres:5432/identity_service}
     username: postgres
     password: 1234
     driver-class-name: org.postgresql.Driver
