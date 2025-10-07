@@ -20,6 +20,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
+    @Column(name = "username", unique = true, columnDefinition = "CITEXT")
     String username;
 
     String password;
@@ -31,3 +32,4 @@ public class User {
     // role ve ManyToMany voi User nua
     Set<Role> roles;
 }
+ 

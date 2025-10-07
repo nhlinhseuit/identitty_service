@@ -1,7 +1,6 @@
 package com.example.identityservice.configuration;
 
 import java.util.HashSet;
-import java.util.Set;
 
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -9,75 +8,61 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.example.identityservice.entity.Permission;
+import com.example.identityservice.constant.PredefinedRole;
 import com.example.identityservice.entity.Role;
 import com.example.identityservice.entity.User;
-import com.example.identityservice.repository.PermissionRepository;
 import com.example.identityservice.repository.RoleRepository;
 import com.example.identityservice.repository.UserRepository;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ApplicationInitConfig {
 
-    private final PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepository;
-    private final PermissionRepository permissionRepository;
+    PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
+
+    @NonFinal
+    static final String ADMIN_USER_NAME = "admin";
+
+    @NonFinal
+    static final String ADMIN_PASSWORD = "admin";
 
     @Bean
     @ConditionalOnProperty(prefix = "spring.datasource", name = "driver-class-name", havingValue = "org.postgresql.Driver")
     ApplicationRunner applicationRunner(UserRepository userRepository) {
+        log.info("Initializing application.....");
         return args -> {
-            // Create APPROVE_POST permission if not exists
-            if (permissionRepository.findById("APPROVE_POST").isEmpty()) {
-                Permission permission = Permission.builder()
-                        .name("APPROVE_POST")
-                        .description("Approve post permission")
-                        .build();
-                permissionRepository.save(permission);
-                log.warn("APPROVE_POST permission created");
-            }
+            if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
+                roleRepository.save(Role.builder()
+                        .name(PredefinedRole.USER_ROLE)
+                        .description("User role")
+                        .build());
 
-            // Create ADMIN role with APPROVE_POST permission if not exists
-            if (roleRepository.findById("ADMIN").isEmpty()) {
-                Set<Permission> permissions = new HashSet<>();
-                permissionRepository.findById("APPROVE_POST").ifPresent(permissions::add);
-
-                Role adminRole = Role.builder()
-                        .name("ADMIN")
+                Role adminRole = roleRepository.save(Role.builder()
+                        .name(PredefinedRole.ADMIN_ROLE)
                         .description("Admin role")
-                        .permissions(permissions)
-                        .build();
-                roleRepository.save(adminRole);
-                log.warn("ADMIN role created with APPROVE_POST permission");
-            }
+                        .build());
 
-            // Delete existing admin user if exists
-            userRepository.findByUsername("admin").ifPresent(existingAdmin -> {
-                userRepository.delete(existingAdmin);
-                log.warn("Existing admin user deleted");
-            });
-
-            // Create new admin user with ADMIN role
-            Role adminRole = roleRepository.findById("ADMIN").orElse(null);
-
-            Set<Role> roles = new HashSet<>();
-            if (adminRole != null) {
+                var roles = new HashSet<Role>();
                 roles.add(adminRole);
+
+                User user = User.builder()
+                        .username(ADMIN_USER_NAME)
+                        .password(passwordEncoder.encode(ADMIN_PASSWORD))
+                        .roles(roles)
+                        .build();
+
+                userRepository.save(user);
+                log.warn("Admin user has been created with default password: admin, please change it");
             }
-
-            User user = User.builder()
-                    .username("admin")
-                    .password(passwordEncoder.encode("admin"))
-                    .roles(roles)
-                    .build();
-
-            userRepository.save(user);
-            log.warn("New admin user has been created with password: admin, please change it");
         };
     }
 }

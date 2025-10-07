@@ -3,17 +3,19 @@ package com.example.identityservice.service;
 import java.util.HashSet;
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.identityservice.constant.PredefinedRole;
 import com.example.identityservice.dto.request.UserCreationRequest;
 import com.example.identityservice.dto.request.UserUpdateRequest;
 import com.example.identityservice.dto.response.UserResponse;
+import com.example.identityservice.entity.Role;
 import com.example.identityservice.entity.User;
-import com.example.identityservice.enums.Role;
 import com.example.identityservice.exception.AppException;
 import com.example.identityservice.exception.ErrorCode;
 import com.example.identityservice.mapper.UserMapper;
@@ -37,42 +39,23 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     public UserResponse createUser(UserCreationRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
+        User user = userMapper.toUser(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        HashSet<Role> roles = new HashSet<>();
+        roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
+
+        user.setRoles(roles);
+
+        try {
+            user = userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            // ? change from check user existed in repository to catch exception Duplicate
+            // username after saving user
             throw new AppException(ErrorCode.USER_EXISTED);
         }
 
-        User user = userMapper.toUser(request);
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
-
-        //        user.setRoles(roles);
-
-        return userMapper.toUserResponse(userRepository.save(user));
-    }
-
-    // sd hasRole thi se tiem trong authority nao co prefix la ROLE_...
-    //    @PreAuthorize("hasRole('ADMIN')")
-    @PreAuthorize("hasAuthority('APPROVE_POST')")
-    // se nem loi access denied
-    public List<UserResponse> getUsers() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        log.info("Getting user in method getUser");
-        authentication.getAuthorities().forEach(authority -> log.info(authority.getAuthority()));
-
-        List<User> users = userRepository.findAll();
-
-        return userMapper.toUserResponseList(users);
-    }
-
-    // Khong bat duoc error access denied, ma phai catch trong Security config -> authenticationEntryPoint
-    @PostAuthorize("returnObject.username == authentication.name")
-    public UserResponse getUser(String userId) {
-        return userMapper.toUserResponse(
-                userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+        return userMapper.toUserResponse(user);
     }
 
     public UserResponse getMyInfo() {
@@ -83,6 +66,9 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
+    // ? PostAuthorize Khong bat duoc error access denied, ma phai catch trong
+    // Security config -> authenticationEntryPoint
+    @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse updateUser(String userId, UserUpdateRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
@@ -96,7 +82,28 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(String userId) {
         userRepository.deleteById(userId);
+    }
+
+    // sd hasRole thi se tiem trong authority nao co prefix la ROLE_...
+    // @PreAuthorize("hasRole('ADMIN')")
+    // sd hasAuthority thi se tim trong authority chinh xac APPROVE_POST
+    // @PreAuthorize("hasAuthority('APPROVE_POST')")
+    // ! khong thoa man PreAuthorize => se nem loi access denied
+
+    public List<UserResponse> getUsers() {
+        return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
+    }
+
+    // ? PostAuthorize Khong bat duoc error access denied, ma phai catch trong
+    // Security config -> authenticationEntryPoint
+    // ? @PostAuthorize("returnObject.username == authentication.name")
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponse getUser(String id) {
+        return userMapper.toUserResponse(
+                userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 }
