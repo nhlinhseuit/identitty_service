@@ -36,7 +36,10 @@ public class ApplicationInitConfig {
     static final String ADMIN_PASSWORD = "admin";
 
     @Bean
-    @ConditionalOnProperty(prefix = "spring.datasource", name = "driver-class-name", havingValue = "org.postgresql.Driver")
+    @ConditionalOnProperty(
+            prefix = "spring.datasource",
+            name = "driver-class-name",
+            havingValue = "org.postgresql.Driver")
     ApplicationRunner applicationRunner(UserRepository userRepository) {
         log.info("Initializing application.....");
         return args -> {

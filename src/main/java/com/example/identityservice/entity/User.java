@@ -32,4 +32,3 @@ public class User {
     // role ve ManyToMany voi User nua
     Set<Role> roles;
 }
- 

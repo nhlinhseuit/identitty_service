@@ -22,7 +22,7 @@ public class Role {
     String description;
 
     @ManyToMany // role co nhieu permissions -> chi can khai bao ManyToMany o day va db se tu
-                // sinh bang, kh can khai bao
+    // sinh bang, kh can khai bao
     // trong permission ve ManyToMany voi Role nua
 
     /// Ban dau co the co truong hop bi loi foreign key, do viec jpa tu dong tao
