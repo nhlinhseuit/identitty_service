@@ -23,3 +23,12 @@ jwt:
   signerKey: "feoqgwuvjddf1u2reureloqrq3h951gw"
   valid-duration: 60 # in seconds
   refreshable-duration: 300 # in seconds
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
