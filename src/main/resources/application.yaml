@@ -3,7 +3,11 @@ spring:
     name: identity-service
 
   datasource:
-    url: ${DBMS_CONNECTION:jdbc:postgresql://postgres:5432/identity_service}
+    # for Local-to-Docker Communication (local identity_service to container postgres)
+    url: ${DBMS_CONNECTION:jdbc:postgresql://localhost:5432/identity_service}
+
+    # for Docker-to-Docker Communication (container identity_service to container postgres + with same network)
+    # url: ${DBMS_CONNECTION:jdbc:postgresql://postgres:5432/identity_service}
     username: postgres
     password: 1234
     driver-class-name: org.postgresql.Driver

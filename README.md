@@ -59,7 +59,7 @@ ___________
 
 docker build -t nhlinhseuit/identity-service:0.9.0 .
 
-     // build for specific ec2 platform: 
+     // build for specific ec2 platform: (enable buildx first)
         docker buildx build --platform linux/amd64 -t nhlinhseuit/identity-service:0.9.0 --push .
 
 
@@ -108,5 +108,5 @@ sudo docker pull nhlinhseuit/identity-service:0.9.0
 
 docker run --name identity-service --network devteria-network -p 8080:8080 -e DBMS_CONNECTION=jdbc:postgresql://postgres:5432/identity_service nhlinhseuit/identity-service:0.9.0
 
-     // If ubuntu show 'no matching manifest for linux/amd64' => build image for ubunto platform
+     // If ubuntu show 'no matching manifest for linux/amd64' => build image for ubunto platform (enable buildx first)
         docker buildx build --platform linux/amd64 -t nhlinhseuit/identity-service:0.9.0 --push .
